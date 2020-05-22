@@ -1,0 +1,10 @@
+{
+    "NotifcationApp": {
+        "lambda": {
+            "region": "us-east-1",
+            "message": "Hi from the aws CLOUD9",
+            "subject": "test",
+            "topicARN": "arn:aws:sns:us-east-1:579690153477:test"
+        }
+    }
+}

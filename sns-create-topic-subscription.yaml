@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Creates a topic in Amazon SNS and then subscribes an email address to that topic. Also creates an execution role so that the AWS Lambda function can call Amazon SNS."
+Parameters:
+  SNSTopicName:
+    Type: "String"
+    Description: "A name for the Amazon SNS topic."
+  EmailAddress: 
+    Type: "String"
+    Description: "The email address that the Amazon SNS topic will forward its messages to."
+Resources:
+  SNSTopic:
+    Type: "AWS::SNS::Topic"
+    Properties:
+      DisplayName: !Ref "SNSTopicName" 
+      TopicName: !Ref "SNSTopicName"
+  SNSSubscription:
+    Type: "AWS::SNS::Subscription"
+    Properties:
+      Endpoint: !Ref "EmailAddress"
+      Protocol: "email"
+      TopicArn: !Ref "SNSTopic"
+  LambdaSNSExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+      RoleName: "LambdaSNSExecutionRole"
+  LambdaSNSExecutionRolePolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action: 
+              - "logs:CreateLogGroup"
+              - "logs:CreateLogStream"
+              - "logs:PutLogEvents"
+            Resource: "*"
+          - Effect: "Allow"
+            Action: 
+              - "sns:Publish"
+            Resource: !Ref "SNSTopic"
+      Roles: 
+        - !Ref "LambdaSNSExecutionRole"
+      PolicyName: "LambdaSNSExecutionRolePolicy"
+    DependsOn: "LambdaSNSExecutionRole"
+Outputs:
+  SNSTopicARN:
+    Description: "The Amazon Resource Name (ARN) of the Amazon SNS topic."
+    Value: !Ref "SNSTopic"
+  SNSTopicName:
+    Description: "The name of the Amazon SNS topic."
+    Value: !GetAtt "SNSTopic.TopicName"
+  LambdaSNSExecutionRoleName:
+    Description: "The name of the AWS Lambda execution role that allows the function to publish to the Amazon SNS topic."
+    Value: !Ref "LambdaSNSExecutionRole"
