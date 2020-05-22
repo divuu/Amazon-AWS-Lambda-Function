@@ -1,2 +1,0 @@
-# Amazon-AWS-Lambda-Function
-In this section, the following steps occur:  An AWS Lambda function was created in AWS Cloud9 in the local development environment. This AWS Lambda function returns the “correct” change and also has an API Gateway trigger. The AWS Lambda function was tested locally using a JSON payload. This AWS Lambda function was deployed to AWS. The deployment created an HTTP URL. Locally in Cloud9, the Python requests library was installed and it was used to make an API call to the HTTP URL. This URL could be requested from anywhere in the world.
